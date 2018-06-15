@@ -76,10 +76,14 @@ class TasklistsController extends Controller
     public function show($id)
     {
       $tasklist = Tasklist::find($id);
-
-        return view('tasklists.show', [
-            'tasklist' => $tasklist,
-        ]);
+        if ($tasklist!=null&&\Auth::check()&&\Auth::id() === $tasklist->user_id) {
+                return view('tasklists.show', [
+                'tasklist' => $tasklist,
+            ]);
+        }
+        else {
+            return redirect('/');
+        }
     }
 
     /**
@@ -91,10 +95,14 @@ class TasklistsController extends Controller
     public function edit($id)
     {
       $tasklist = Tasklist::find($id);
-
-        return view('tasklists.edit', [
-            'tasklist' => $tasklist,
-        ]);
+        if (\Auth::check()&&\Auth::id() === $tasklist->user_id) {
+                return view('tasklists.edit', [
+                'tasklist' => $tasklist,
+            ]);
+        }
+        else {
+            return redirect('/');
+        }
     }
 
     /**
@@ -108,16 +116,16 @@ class TasklistsController extends Controller
     {
           $this->validate($request, [
               'status' => 'required|max:10', 
-            'content' => 'required|max:191',
-        ]);
-       
-       
+            'content' => 'required|max:191',]);
+            
         $tasklist = Tasklist::find($id);
-        $tasklist->status = $request->status;   
-        $tasklist->content = $request->content;
-        $tasklist->save();
-
+        if (\Auth::check()&&\Auth::id() === $tasklist->user_id) {
+            $tasklist->status = $request->status;   
+            $tasklist->content = $request->content;
+            $tasklist->save();
+        }
         return redirect('/');
+        
     }
 
     /**
@@ -129,8 +137,9 @@ class TasklistsController extends Controller
     public function destroy($id)
     {
        $tasklist = Tasklist::find($id);
-        $tasklist->delete();
-
+        if (\Auth::check()&&\Auth::id() === $tasklist->user_id) {
+            $tasklist->delete();
+        }
         return redirect('/');
     }
 }

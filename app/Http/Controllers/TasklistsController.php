@@ -33,11 +33,16 @@ class TasklistsController extends Controller
      */
     public function create()
     {
-     $tasklist = new Tasklist;
-
-        return view('tasklists.create', [
-            'tasklist' => $tasklist,
-        ]);
+         $tasklist = new Tasklist;
+         if (\Auth::check()) {
+                 return view('tasklists.create', [
+                'tasklist' => $tasklist,
+            ]);
+        }
+         else {
+            return redirect('/');
+        }
+       
     }
 
     /**
@@ -56,6 +61,7 @@ class TasklistsController extends Controller
        $tasklist = new Tasklist;
        $tasklist->status = $request->status;   
         $tasklist->content = $request->content;
+        $tasklist->user_id =\Auth::id();
         $tasklist->save();
 
         return redirect('/');
@@ -104,7 +110,8 @@ class TasklistsController extends Controller
               'status' => 'required|max:10', 
             'content' => 'required|max:191',
         ]);
-        
+       
+       
         $tasklist = Tasklist::find($id);
         $tasklist->status = $request->status;   
         $tasklist->content = $request->content;

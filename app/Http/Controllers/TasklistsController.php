@@ -19,6 +19,7 @@ class TasklistsController extends Controller
         if (\Auth::check()) {
             $user = \Auth::user();
             $tasklists = $user->tasklists()->orderBy('created_at', 'desc')->paginate(10);
+             return view('tasklists.index', ['tasklists' => $tasklists]);
         }
         else {
             return view('welcome');
